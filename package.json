@@ -1,0 +1,70 @@
+{
+  "author": "IOpipe <dev@iopipe.com>",
+  "bugs": {
+    "url": "https://github.com/iopipe/sqs-to-lambda-async/issues"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.7.20",
+    "babel-runtime": "^6.23.0",
+    "debug": "^2.6.8",
+    "lodash": "^4.17.4",
+    "p-forever": "^1.0.1"
+  },
+  "description": "SQS To Lambda (Async)",
+  "devDependencies": {
+    "aws-sdk-mock": "^1.7.0",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^7.2.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.5.2",
+    "delay": "^2.0.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-jest": "^19.0.1",
+    "eslint-plugin-prettier": "^2.1.2",
+    "jest": "^19.0.2",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.5.2"
+  },
+  "engines": {
+    "node": ">=4.2.6"
+  },
+  "files": [
+    "dist/"
+  ],
+  "homepage": "https://github.com/iopipe/sqs-to-lambda-async#readme",
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "example",
+      "dist"
+    ]
+  },
+  "keywords": [
+    "lambda",
+    "serverless",
+    "sqs",
+    "iopipe"
+  ],
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "name": "sqs-to-lambda-async",
+  "pre-commit": [
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iopipe/sqs-to-lambda-async.git"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production npm run folder && npm run babel",
+    "babel": "babel src --out-dir dist --ignore **/*.test.js,**/__mocks__/**",
+    "eslint": "eslint src",
+    "eslintFix": "npm run eslint -- --fix",
+    "folder": "rm -rf dist && mkdir dist",
+    "jest": "jest",
+    "prepublish": "npm run build",
+    "test": "npm run eslint && npm run build && npm run jest"
+  },
+  "version": "0.3.1"
+}

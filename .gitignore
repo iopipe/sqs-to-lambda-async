@@ -1,0 +1,8 @@
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+*.log
+v8-compile-cache-*
+jest/*
+coverage
+dist
