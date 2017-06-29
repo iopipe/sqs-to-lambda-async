@@ -66,5 +66,5 @@
     "prepublish": "npm run build",
     "test": "npm run eslint && npm run build && npm run jest"
   },
-  "version": "0.3.1"
+  "version": "0.1.0"
 }
