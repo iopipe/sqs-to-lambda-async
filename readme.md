@@ -46,7 +46,22 @@ The Lambda function you want to execute.
 
 #### `messageFormatter` (function: optional)
 
-A function that allows transformation of the message before send to Lambda.
+A function that allows transformation of the SQS message before send to Lambda.
+
+Example:
+```
+worker([
+  {
+    queueUrl: 'sqs-queue-url-here',
+    functionName: 'lambda-arn-here',
+    messageFormatter: (msg) => {
+      return Object.assign({}, msg, {
+        Body: 'reconfigure the sqs body here'
+      })
+    }
+  }
+]);
+```
 
 #### `deleteMessage` (boolean: optional, default = false)
 

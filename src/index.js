@@ -9,6 +9,7 @@ let lambda = undefined;
 
 function handleMessage(message = {}, kwargs = {}) {
   return new Promise((resolve, reject) => {
+    debug(`Incoming message: ${JSON.stringify(message)}`);
     const { MessageFormatter, FunctionName, DeleteMessage, QueueUrl } = kwargs;
     //no sqs message to process
     if (_.isEmpty(message)) {
