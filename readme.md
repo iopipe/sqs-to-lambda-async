@@ -1,6 +1,6 @@
 # SQS to Lambda (Async)
 
-[![CircleCI](https://circleci.com/gh/iopipe/sqs-to-lambda-async.svg?style=svg)](https://circleci.com/gh/iopipe/sqs-to-lambda-async)
+[![CircleCI](https://circleci.com/gh/iopipe/sqs-to-lambda-async.svg?style=svg&circle-token=54579c6f78d8dd9bcc6f96696a8481e7bc007596)](https://circleci.com/gh/iopipe/sqs-to-lambda-async)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 So you want to trigger a Lambda function via SQS? Great! You might be able to use [sqs-to-lambda](https://github.com/robinjmurphy/sqs-to-lambda). But what if you want your Lambda function to delete the SQS message, instead of the sqs-to-lambda implementation? Or, what if you want to setup multiple SQS => Lambda configurations? That's where this package comes in.
