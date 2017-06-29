@@ -136,7 +136,7 @@ test('Runs successfully when using DeleteMessage', async () => {
 });
 
 test('Runs successfully when using MessageFormatter', async () => {
-  // expect.assertions(5);
+  expect.assertions(9);
   try {
     lambdaInvocations = [];
     resetMessages();
