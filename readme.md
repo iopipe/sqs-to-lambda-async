@@ -21,7 +21,7 @@ npm install sqs-to-lambda-async
 ```
 
 Then, run your application:
-```
+```js
 import worker from 'sqs-to-lambda-async';
 
 worker([
@@ -49,7 +49,7 @@ The Lambda function you want to execute.
 A function that allows transformation of the SQS message before send to Lambda.
 
 Example:
-```
+```js
 worker([
   {
     queueUrl: 'sqs-queue-url-here',
