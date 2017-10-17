@@ -177,8 +177,9 @@ test('Runs successfully when using MessageFormatter', async () => {
   }
 });
 
-test('Errors with bad functions', async () => {
-  expect.assertions(4);
+test('Does not halt with bad functions', async () => {
+  resetMessages();
+  expect.assertions(2);
   let targetErr = undefined;
   try {
     lambdaInvocations = [];
@@ -194,7 +195,38 @@ test('Errors with bad functions', async () => {
     targetErr = err;
   }
   expect(lambdaInvocations.length).toBe(0);
-  expect(targetErr).toBeDefined();
-  expect(targetErr).toBeInstanceOf(Error);
-  expect(targetErr.message).toMatch(/is a bad function/);
+  expect(targetErr).toBe(undefined);
+});
+
+test('Uses onLambdaComplete function correctly', async () => {
+  resetMessages();
+  lambdaInvocations = [];
+  const settled = [];
+  const onLambdaComplete = obj => settled.push(obj);
+  await lib([
+    {
+      queueUrl: 'test-1',
+      functionName: 'badFunction',
+      numberOfRuns: 1,
+      onLambdaComplete
+    },
+    {
+      queueUrl: 'test-1',
+      functionName: 'boop',
+      numberOfRuns: 1,
+      onLambdaComplete
+    }
+  ]);
+  await delay(10);
+  expect(settled.length).toBe(4);
+  expect(_.filter(settled, { isFulfilled: true }).length).toBe(2);
+  expect(_.filter(settled, { isRejected: true }).length).toBe(2);
+  expect(_.find(settled, { isFulfilled: true }).value.FunctionName).toBe(
+    'boop'
+  );
+  expect(
+    _.find(settled, { isRejected: true }).reason.message.match(
+      /bad function yo/
+    )
+  );
 });

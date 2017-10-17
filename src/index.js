@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import AWS from 'aws-sdk';
 import pForever from 'p-forever';
+import pSettle from 'p-settle';
 
 const debug = require('debug')('sqs-to-lambda-async');
 
@@ -51,7 +52,7 @@ function handleMessage(message = {}, kwargs = {}) {
 }
 
 function receiveMessages(kwargs = {}) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const recieveArgs = _.chain(kwargs)
       .pick([
         'MaxNumberOfMessages',
@@ -63,26 +64,36 @@ function receiveMessages(kwargs = {}) {
       .value();
     sqs.receiveMessage(recieveArgs, (err, data) => {
       const messages = _.isArray(data.Messages) ? data.Messages : [];
-      Promise.all(
+      pSettle(
         messages.map(msg => {
           return handleMessage(msg, kwargs);
         })
-      )
-        .then(resolve)
-        .catch(reject);
+      ).then(resolve);
     });
   });
+}
+
+function handleLambdaComplete(kwargs, values = []) {
+  const { OnLambdaComplete } = kwargs;
+  if (_.isArray(values) && _.isFunction(OnLambdaComplete)) {
+    try {
+      values.forEach(OnLambdaComplete);
+    } catch (err) {
+      _.noop();
+    }
+  }
 }
 
 function createReader(kwargs) {
   debug(`Creating reader with args: ${JSON.stringify(kwargs)}`);
   let readerIndex = -1;
-  return pForever(() => {
+  return pForever(previousVal => {
+    handleLambdaComplete(kwargs, previousVal);
     readerIndex++;
     return readerIndex < kwargs.NumberOfRuns
       ? receiveMessages(kwargs)
       : pForever.end;
-  }, readerIndex);
+  }, []);
 }
 
 function setupServices() {
@@ -118,7 +129,8 @@ module.exports = async function run(mapping = []) {
           waitTimeSeconds: 5,
           messageFormatter: a => a,
           numberOfRuns: Infinity,
-          deleteMessage: false
+          deleteMessage: false,
+          onLambdaComplete: _.noop
         })
         .mapKeys((val, key) => _.upperFirst(key))
         .value();

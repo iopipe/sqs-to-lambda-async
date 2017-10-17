@@ -8,7 +8,8 @@
     "babel-runtime": "^6.23.0",
     "debug": "^2.6.8",
     "lodash": "^4.17.4",
-    "p-forever": "^1.0.1"
+    "p-forever": "^1.0.1",
+    "p-settle": "^2.0.0"
   },
   "description": "SQS To Lambda (Async)",
   "devDependencies": {
