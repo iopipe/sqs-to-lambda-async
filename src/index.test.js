@@ -198,7 +198,7 @@ test('Does not halt with bad functions', async () => {
   expect(targetErr).toBe(undefined);
 });
 
-test('Uses onLambdaComplete function correctly', async () => {
+test('Uses onLambda function correctly', async () => {
   resetMessages();
   lambdaInvocations = [];
   const settled = [];
