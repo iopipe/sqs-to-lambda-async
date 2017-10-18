@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import AWS from 'aws-sdk';
 import pForever from 'p-forever';
+import pSettle from 'p-settle';
 
 const debug = require('debug')('sqs-to-lambda-async');
 
@@ -51,7 +52,7 @@ function handleMessage(message = {}, kwargs = {}) {
 }
 
 function receiveMessages(kwargs = {}) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const recieveArgs = _.chain(kwargs)
       .pick([
         'MaxNumberOfMessages',
@@ -63,26 +64,40 @@ function receiveMessages(kwargs = {}) {
       .value();
     sqs.receiveMessage(recieveArgs, (err, data) => {
       const messages = _.isArray(data.Messages) ? data.Messages : [];
-      Promise.all(
+      pSettle(
         messages.map(msg => {
           return handleMessage(msg, kwargs);
         })
-      )
-        .then(resolve)
-        .catch(reject);
+      ).then(resolve);
     });
   });
+}
+
+function handleLambdaCallback(kwargs, values = []) {
+  const { PostInvoke } = kwargs;
+  if (_.isArray(values) && _.isFunction(PostInvoke)) {
+    try {
+      values.forEach((obj = {}) => {
+        return obj.isFulfilled
+          ? PostInvoke(undefined, obj.value)
+          : PostInvoke(obj.reason || new Error('Unknown lambda error.'));
+      });
+    } catch (err) {
+      _.noop();
+    }
+  }
 }
 
 function createReader(kwargs) {
   debug(`Creating reader with args: ${JSON.stringify(kwargs)}`);
   let readerIndex = -1;
-  return pForever(() => {
+  return pForever(previousVal => {
+    handleLambdaCallback(kwargs, previousVal);
     readerIndex++;
     return readerIndex < kwargs.NumberOfRuns
       ? receiveMessages(kwargs)
       : pForever.end;
-  }, readerIndex);
+  }, []);
 }
 
 function setupServices() {
@@ -118,7 +133,8 @@ module.exports = async function run(mapping = []) {
           waitTimeSeconds: 5,
           messageFormatter: a => a,
           numberOfRuns: Infinity,
-          deleteMessage: false
+          deleteMessage: false,
+          postInvoke: _.noop
         })
         .mapKeys((val, key) => _.upperFirst(key))
         .value();

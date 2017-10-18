@@ -177,8 +177,9 @@ test('Runs successfully when using MessageFormatter', async () => {
   }
 });
 
-test('Errors with bad functions', async () => {
-  expect.assertions(4);
+test('Does not halt with bad functions', async () => {
+  resetMessages();
+  expect.assertions(2);
   let targetErr = undefined;
   try {
     lambdaInvocations = [];
@@ -194,7 +195,32 @@ test('Errors with bad functions', async () => {
     targetErr = err;
   }
   expect(lambdaInvocations.length).toBe(0);
-  expect(targetErr).toBeDefined();
-  expect(targetErr).toBeInstanceOf(Error);
-  expect(targetErr.message).toMatch(/is a bad function/);
+  expect(targetErr).toBe(undefined);
+});
+
+test('Uses postInvoke function correctly', async () => {
+  resetMessages();
+  lambdaInvocations = [];
+  const settled = [];
+  const postInvoke = (err, val) => settled.push({ err, val });
+  await lib([
+    {
+      queueUrl: 'test-1',
+      functionName: 'badFunction',
+      numberOfRuns: 1,
+      postInvoke
+    },
+    {
+      queueUrl: 'test-1',
+      functionName: 'boop',
+      numberOfRuns: 1,
+      postInvoke
+    }
+  ]);
+  await delay(10);
+  expect(settled.length).toBe(4);
+  expect(_.filter(settled, obj => obj.err).length).toBe(2);
+  expect(_.filter(settled, obj => obj.val).length).toBe(2);
+  expect(_.find(settled, obj => obj.val).val.FunctionName).toBe('boop');
+  expect(_.find(settled, obj => obj.err).err.message.match(/bad function yo/));
 });
