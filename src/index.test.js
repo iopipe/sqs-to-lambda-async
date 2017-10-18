@@ -198,23 +198,23 @@ test('Does not halt with bad functions', async () => {
   expect(targetErr).toBe(undefined);
 });
 
-test('Uses onLambda function correctly', async () => {
+test('Uses postInvoke function correctly', async () => {
   resetMessages();
   lambdaInvocations = [];
   const settled = [];
-  const onLambda = (err, val) => settled.push({ err, val });
+  const postInvoke = (err, val) => settled.push({ err, val });
   await lib([
     {
       queueUrl: 'test-1',
       functionName: 'badFunction',
       numberOfRuns: 1,
-      onLambda
+      postInvoke
     },
     {
       queueUrl: 'test-1',
       functionName: 'boop',
       numberOfRuns: 1,
-      onLambda
+      postInvoke
     }
   ]);
   await delay(10);

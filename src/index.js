@@ -74,13 +74,13 @@ function receiveMessages(kwargs = {}) {
 }
 
 function handleLambdaCallback(kwargs, values = []) {
-  const { OnLambda } = kwargs;
-  if (_.isArray(values) && _.isFunction(OnLambda)) {
+  const { PostInvoke } = kwargs;
+  if (_.isArray(values) && _.isFunction(PostInvoke)) {
     try {
       values.forEach((obj = {}) => {
-        return obj.isRejected
-          ? OnLambda(obj.reason || new Error('Unknown lambda error.'))
-          : OnLambda(undefined, obj.value);
+        return obj.isFulfilled
+          ? PostInvoke(undefined, obj.value)
+          : PostInvoke(obj.reason || new Error('Unknown lambda error.'));
       });
     } catch (err) {
       _.noop();
@@ -134,7 +134,7 @@ module.exports = async function run(mapping = []) {
           messageFormatter: a => a,
           numberOfRuns: Infinity,
           deleteMessage: false,
-          onLambda: _.noop
+          postInvoke: _.noop
         })
         .mapKeys((val, key) => _.upperFirst(key))
         .value();

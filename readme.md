@@ -76,7 +76,7 @@ The maximum number of messages to return. [AWS Documenation](http://docs.aws.ama
 
 The duration (in seconds) for which the call waits for a message to arrive in the queue before returning. [AWS Documenation](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html)
 
-#### `onLambda` (function: optional)
+#### `postInvoke` (function: optional)
 
 Optional callback that is invoked after each lambda invocation. Useful for error handling.
 
@@ -86,7 +86,7 @@ worker([
   {
     queueUrl: 'sqs-queue-url-here',
     functionName: 'lambda-arn-here',
-    onLambda(err, value){
+    postInvoke(err, value){
       // err will be undefined if lambda invoked successfully
       // value includes FunctionName and Payload
     }
