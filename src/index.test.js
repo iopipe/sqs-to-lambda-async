@@ -202,31 +202,25 @@ test('Uses onLambdaComplete function correctly', async () => {
   resetMessages();
   lambdaInvocations = [];
   const settled = [];
-  const onLambdaComplete = obj => settled.push(obj);
+  const onLambda = (err, val) => settled.push({ err, val });
   await lib([
     {
       queueUrl: 'test-1',
       functionName: 'badFunction',
       numberOfRuns: 1,
-      onLambdaComplete
+      onLambda
     },
     {
       queueUrl: 'test-1',
       functionName: 'boop',
       numberOfRuns: 1,
-      onLambdaComplete
+      onLambda
     }
   ]);
   await delay(10);
   expect(settled.length).toBe(4);
-  expect(_.filter(settled, { isFulfilled: true }).length).toBe(2);
-  expect(_.filter(settled, { isRejected: true }).length).toBe(2);
-  expect(_.find(settled, { isFulfilled: true }).value.FunctionName).toBe(
-    'boop'
-  );
-  expect(
-    _.find(settled, { isRejected: true }).reason.message.match(
-      /bad function yo/
-    )
-  );
+  expect(_.filter(settled, obj => obj.err).length).toBe(2);
+  expect(_.filter(settled, obj => obj.val).length).toBe(2);
+  expect(_.find(settled, obj => obj.val).val.FunctionName).toBe('boop');
+  expect(_.find(settled, obj => obj.err).err.message.match(/bad function yo/));
 });

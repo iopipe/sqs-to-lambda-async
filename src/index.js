@@ -73,11 +73,15 @@ function receiveMessages(kwargs = {}) {
   });
 }
 
-function handleLambdaComplete(kwargs, values = []) {
-  const { OnLambdaComplete } = kwargs;
-  if (_.isArray(values) && _.isFunction(OnLambdaComplete)) {
+function handleLambdaCallback(kwargs, values = []) {
+  const { OnLambda } = kwargs;
+  if (_.isArray(values) && _.isFunction(OnLambda)) {
     try {
-      values.forEach(OnLambdaComplete);
+      values.forEach((obj = {}) => {
+        return obj.isRejected
+          ? OnLambda(obj.reason || new Error('Unknown lambda error.'))
+          : OnLambda(undefined, obj.value);
+      });
     } catch (err) {
       _.noop();
     }
@@ -88,7 +92,7 @@ function createReader(kwargs) {
   debug(`Creating reader with args: ${JSON.stringify(kwargs)}`);
   let readerIndex = -1;
   return pForever(previousVal => {
-    handleLambdaComplete(kwargs, previousVal);
+    handleLambdaCallback(kwargs, previousVal);
     readerIndex++;
     return readerIndex < kwargs.NumberOfRuns
       ? receiveMessages(kwargs)
@@ -130,7 +134,7 @@ module.exports = async function run(mapping = []) {
           messageFormatter: a => a,
           numberOfRuns: Infinity,
           deleteMessage: false,
-          onLambdaComplete: _.noop
+          onLambda: _.noop
         })
         .mapKeys((val, key) => _.upperFirst(key))
         .value();
