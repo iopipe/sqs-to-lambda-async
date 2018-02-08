@@ -6,7 +6,7 @@
   "dependencies": {
     "aws-sdk": "^2.7.20",
     "babel-runtime": "^6.23.0",
-    "debug": "^2.6.8",
+    "debug": "^3.1.0",
     "lodash": "^4.17.4",
     "p-forever": "^1.0.1",
     "p-settle": "^2.0.0"
@@ -16,14 +16,14 @@
     "aws-sdk-mock": "^1.7.0",
     "babel-cli": "^6.18.0",
     "babel-core": "^6.25.0",
-    "babel-eslint": "^7.2.1",
+    "babel-eslint": "^8.2.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.5.2",
     "delay": "^2.0.0",
-    "eslint": "^3.19.0",
-    "eslint-plugin-jest": "^19.0.1",
+    "eslint": "^4.17.0",
+    "eslint-plugin-jest": "^21.7.0",
     "eslint-plugin-prettier": "^2.1.2",
-    "jest": "^19.0.2",
+    "jest": "^22.2.1",
     "pre-commit": "^1.2.2",
     "prettier": "^1.5.2"
   },
