@@ -1,5 +1,7 @@
 # SQS to Lambda (Async)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/iopipe/sqs-to-lambda-async.svg)](https://greenkeeper.io/)
+
 [![CircleCI](https://circleci.com/gh/iopipe/sqs-to-lambda-async.svg?style=svg&circle-token=54579c6f78d8dd9bcc6f96696a8481e7bc007596)](https://circleci.com/gh/iopipe/sqs-to-lambda-async)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
