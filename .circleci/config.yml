@@ -55,5 +55,7 @@ workflows:
             - install
             - test
           filters:
+            branches:
+              ignore: /.*/
             tags:
                only: /^v.*/
